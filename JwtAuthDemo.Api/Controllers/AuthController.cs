@@ -1,14 +1,13 @@
-﻿// Controllers/AuthController.cs
+﻿
 using JwtAuthDemo.Api.Data;
 using JwtAuthDemo.Api.Entities.Models;
 using JwtAuthDemo.Api.Services;
 using JwtAuthDemo.Api.Settings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Threading.Tasks;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -111,6 +110,7 @@ public class AuthController : ControllerBase
         return Ok(new AuthResponse(newAccessToken, newRefreshValue, _jwtSettings.AccessTokenExpirationMinutes * 60));
     }
 
+    [Authorize]
     [HttpPost("logout")]
     public async Task<IActionResult> Logout(LogoutDto dto)
     {
@@ -124,10 +124,12 @@ public class AuthController : ControllerBase
 
         token.Revoked = DateTime.UtcNow;
         await _db.SaveChangesAsync();
-        return NoContent();
+        //return NoContent();
+        return Ok(new { message = "You have been logged out successfully." });
     }
 
     // optional: logout from ALL devices
+    [Authorize]
     [HttpPost("logout-all/{username}")]
     public async Task<IActionResult> LogoutAll(string username)
     {
@@ -138,6 +140,7 @@ public class AuthController : ControllerBase
             if (rt.Revoked == null) rt.Revoked = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();
-        return NoContent();
+        //return NoContent();
+        return Ok(new { message = "You have been logged out all successfully." });
     }
 }
