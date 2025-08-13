@@ -1,5 +1,6 @@
 using JwtAuthDemo.Api.Data;
 using JwtAuthDemo.Api.Entities.Models;
+using JwtAuthDemo.Api.GlobalError;
 using JwtAuthDemo.Api.Services;
 using JwtAuthDemo.Api.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +24,10 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowCredentials());
 });
+
+// Register global error handler
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 // configuration
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
@@ -76,6 +81,8 @@ app.UseCors("AllowAngularDevClient");
 app.UseAuthentication();
 
 app.UseAuthorization();
+// Enable global error handling
+app.UseExceptionHandler();
 
 app.MapControllers();
 

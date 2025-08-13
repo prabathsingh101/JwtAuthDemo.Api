@@ -29,6 +29,13 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterDto dto)
     {
+        // Simulate a business rule
+        if (string.IsNullOrWhiteSpace(dto.Username))
+            throw new ArgumentException("User name is required");
+
+        if (string.IsNullOrWhiteSpace(dto.Password))
+            throw new ArgumentException("Password is required");
+
         if (await _db.Users.AnyAsync(u => u.Username == dto.Username))
             return BadRequest("Username already exists");
 
@@ -39,9 +46,9 @@ public class AuthController : ControllerBase
         user.PasswordHash = _passwordHasher.HashPassword(user, dto.Password);
 
         _db.Users.Add(user);
-        await _db.SaveChangesAsync();
+        await _db.SaveChangesAsync(); // If SQL fails, GlobalExceptionHandler catches it
 
-        return Ok(new { user.Id, user.Username });
+        return Ok(new { user.Id, user.Username, user.PasswordHash });
     }
 
     [HttpPost("login")]
