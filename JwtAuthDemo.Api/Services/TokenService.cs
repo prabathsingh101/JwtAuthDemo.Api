@@ -1,10 +1,9 @@
-﻿// Services/TokenService.cs
+// Services/TokenService.cs
 using JwtAuthDemo.Api.Entities.Models;
 using JwtAuthDemo.Api.Services;
 using JwtAuthDemo.Api.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;

@@ -1,4 +1,4 @@
-﻿
+
 using JwtAuthDemo.Api.Data;
 using JwtAuthDemo.Api.Entities.Models;
 using JwtAuthDemo.Api.Services;
@@ -57,11 +57,11 @@ public class AuthController : ControllerBase
         var user = await _db.Users.Include(u => u.RefreshTokens)
                                  .SingleOrDefaultAsync(u => u.Username == dto.Username);
         if (user == null)
-            return Unauthorized();
+            return Unauthorized(new { message = "Invalid username or password" });
 
         var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
         if (result == PasswordVerificationResult.Failed)
-            return Unauthorized();
+            return Unauthorized(new { message = "Invalid username or password" });
 
         var accessToken = _tokenService.CreateAccessToken(user);
         var refreshTokenValue = _tokenService.CreateRefreshToken();
